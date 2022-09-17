@@ -1,0 +1,200 @@
+/* Configuration - (device configuration specifications) */
+
+/* "type" declarations for both real- and pseudo- devices */
+
+/* console device, actual Sun keyboard and monitor */
+con:
+	on PHY		-i coninit	-o ionull	-c ionull
+			-r conread	-w conwrite	-s ioerr
+			-n concntl	-g congetc	-p conputc
+			-iint ioerr	-oint ioerr
+
+
+/* terminals connected by serial lines */
+tty: 
+	on SLU		-i ttyinit	-o ionull	-c ionull
+			-r ttyread	-w ttywrite	-s ioerr
+			-n ttycntl	-g ttygetc	-p ttyputc
+			-iint ioerr	-oint ioerr
+
+
+/* Ethernet using a LANCE interface */
+eth:
+	on LANCE	-i ethinit	-o ioerr	-c ioerr 
+			-r ioerr	-w ethwrite	-s ioerr
+			-n ethcntl	-g ioerr	-p ioerr
+			-iint ethinter	-oint ethinter
+
+/* Othernet interface */
+oth:
+	on LANCE	-i othinit	-o ioerr	-c ioerr 
+			-r ioerr	-w othwrite	-s ioerr
+			-n ioerr	-g ioerr	-p ioerr
+			-iint ethinter	-oint ethinter
+
+
+/* Datagram interface to network (master device) */
+dgm:
+	on ETH		-i ionull	-o dgmopen	-c ioerr 
+			-r ioerr	-w ioerr	-s ioerr
+			-n dgmcntl	-g ioerr	-p ioerr
+			-iint ioerr	-oint ioerr	-csr 0
+			-ivec 0		-ovec 0
+
+/* A datagram "connection"  (pseudo-device returned by dgm open) */
+dg:
+	on ETH		-i dginit	-o ioerr	-c dgclose
+			-r dgread	-w dgwrite	-s ioerr
+			-n dgcntl	-g ioerr	-p ioerr
+			-iint ioerr	-oint ioerr	-csr 0
+			-ivec 0		-ovec 0
+
+/* Streams interface to network (master device) */
+tcpm:
+	on ETH		-i ionull	-o tcpmopen	-c ioerr 
+			-r ioerr	-w ioerr	-s ioerr
+			-n tcpmcntl	-g ioerr	-p ioerr
+			-iint ioerr	-oint ioerr	-csr 0
+			-ivec 0		-ovec 0
+
+/* A tcp "connection"  (pseudo-device returned by tcpm open) */
+tcp:
+	on ETH		-i tcpinit	-o ioerr	-c tcpclose
+			-r tcpread	-w tcpwrite	-s ioerr
+			-n tcpcntl	-g tcpgetc	-p tcpputc
+			-iint ioerr	-oint ioerr	-csr 0
+			-ivec 0		-ovec 0
+
+/* Remote file system master device (open to get rf device) */
+rfm:
+	on DGM		-i ioerr	-o rfopen	-c ioerr
+			-r ioerr	-w ioerr	-s ioerr
+			-n rfcntl	-g ioerr	-p ioerr
+			-iint ioerr	-oint ioerr	-csr 0
+			-ivec 0		-ovec 0
+
+/* A remote file (pseudo-device returned by rfm open) */
+rf:
+	on DGM		-i rfinit	-o ioerr	-c rfclose 
+			-r ioerr	-w ioerr	-s ioerr
+			-n rfcntl	-g rfgetc	-p rfputc
+			-iint ioerr	-oint ioerr	-csr 0
+			-ivec 0		-ovec 0
+
+/* Name system (topmost level of name resolution mechanism) */
+nam:
+	on TOP		-i naminit	-o namopen	-c ioerr
+			-r ioerr	-w ioerr	-s ioerr
+			-n ioerr	-g ioerr	-p ioerr
+			-iint ioerr	-oint ioerr	-csr 0
+			-ivec 0		-ovec 0
+%
+
+/* Device definitions starting with terminals */
+CONSOLE		is tty  on SLU		csr=01770020004 ivec=0170 ovec=0170
+					   /* 0xfe02004      0x78      0x78 */
+
+
+/* The Serial port B */
+TTYB		is tty  on SLU		csr=01770020000 ivec=0170 ovec=0170
+					   /* 0xfe02000       0x78      0x78 */
+
+/* The physical Sun keyboard and monitor */
+/*
+PHYSICAL	is con	on PHY		csr=01770000000 ivec=0170 ovec=0170
+*/
+					   /* 0xfe00000 */
+
+/* Physical ethernet raw packet interface */
+
+ETHER		is eth	on LANCE		csr=01770200000 ivec=0154 ovec=0154
+					   /* 0xfe10000    0x6c  0x6c */
+
+/* Network interface simulators */
+
+/*
+OTHER1		is oth	on LANCE	csr=01770200000 ivec=0154 ovec=0154
+OTHER2		is oth	on LANCE	csr=01770200000 ivec=0154 ovec=0154
+*/
+
+/* Datagram network interface (master pseudo-device) */
+
+UDP	is dgm	on ETH
+
+/* Pseudo-device slots for datagram "connections" */
+
+DGRAM0		is dg	on ETH
+DGRAM1		is dg	on ETH
+DGRAM2		is dg	on ETH
+DGRAM3		is dg	on ETH
+DGRAM4		is dg	on ETH
+DGRAM5		is dg	on ETH
+DGRAM6		is dg	on ETH
+DGRAM7		is dg	on ETH
+DGRAM8		is dg	on ETH
+DGRAM9		is dg	on ETH
+DGRAMA		is dg	on ETH
+DGRAMB		is dg	on ETH
+DGRAMC		is dg	on ETH
+DGRAMD		is dg	on ETH
+DGRAME		is dg	on ETH
+DGRAMF		is dg	on ETH
+
+/* TCP network interface (master pseudo-device) */
+
+TCP	is tcpm	on ETH
+
+/* Pseudo-device slots for TCP "connections" */
+
+TCP0		is tcp	on ETH
+TCP1		is tcp	on ETH
+TCP2		is tcp	on ETH
+TCP3		is tcp	on ETH
+TCP4		is tcp	on ETH
+TCP5		is tcp	on ETH
+TCP6		is tcp	on ETH
+TCP7		is tcp	on ETH
+TCP8		is tcp	on ETH
+TCP9		is tcp	on ETH
+TCPA		is tcp	on ETH
+TCPB		is tcp	on ETH
+TCPC		is tcp	on ETH
+TCPD		is tcp	on ETH
+TCPE		is tcp	on ETH
+TCPF		is tcp	on ETH
+
+%
+
+/* Configuration and Size Constants */
+
+#define	NPROC	    50			/* number of user processes	*/
+#define	NSEM	    512			/* number of semaphores		*/
+#define	MEMMARK				/* define if memory marking used*/
+#define	RTCLOCK				/* now have RTC support		*/
+#define	STKCHK				/* resched checks stack overflow*/
+#define	NETDAEMON			/* Ethernet network daemon runs	*/
+
+#define	TSERVER	    "129.231.61.27:37"	/* Time server address		*/
+#define	RSERVER	    "129.231.61.27:2001"	/* Remote file server address */
+#define	NSERVER	    "129.231.61.27:53"	/* Domain Name server address	*/
+
+#define	BINGID	9			/* my BING */
+
+#define	SMALLMTU	400		/* for OTHER2 */
+
+#define	NBPOOLS	5
+#define	BPMAXB	4096
+#define BPMAXN	512
+
+#define	MAXMARK	20				/* max number of marked locations */
+
+#define _NFILE	20
+
+#define	TCPSBS	4096			/* TCP send buffer sizes	*/
+#define	TCPRBS	16384			/* TCP receive buffer sizes	*/
+
+#define	NPORTS	200
+
+#define	TIMERGRAN	1		/* timer granularity, secs/10	*/
+
+#define	Noth	0

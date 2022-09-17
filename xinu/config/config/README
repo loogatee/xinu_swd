@@ -1,0 +1,7 @@
+
+
+The executable target name is indeed config.o.  It has the .o extension
+purely to help co-exist more peacefully with CVS.  If the executable's
+name is just config (the logical choice), then a "cvs update"  shows
+this file prefaced by ?.  With the .o, "cvs update" just ignores it
+and does not list it in the update.
