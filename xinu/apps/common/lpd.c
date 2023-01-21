@@ -13,13 +13,13 @@ static char rcsid[] = "$Id: lpd.c,v 1.2 1992/12/22 19:01:25 johnr Exp $";
  *    LOCAL DEFINES
  */
 #define    SZ_DBUF        1024        /* size of reads and writes from TCP device */
-#define    SBSZ        80            /* storage buffer size */
+#define    SBSZ           80          /* storage buffer size */
 
 /*
  *    EXTERNALLY REFERENCED FUNCTIONS
  */
 extern    u_char        *index();
-extern    void        spool_hostname(), spool_username(), spool_filename();
+extern    void           spool_hostname(), spool_username(), spool_filename();
 
 /*
  *    LOCAL FUNCTIONS - GLOBAL
@@ -30,7 +30,7 @@ PROCESS        lp_dd(), lp_d();
  *    LOCAL FUNCTIONS - STATIC
  */
 static    int        check_slots(), send_ack(), send_pclose();
-static    void    extract_data(), extract_control();
+static    void       extract_data(), extract_control();
 
 /*
  *    LOCAL VARIABLES - STATIC
@@ -49,10 +49,10 @@ static    void    extract_data(), extract_control();
  *        the network.
  *
  */
-static    int            lpd_sem;
+static    int          lpd_sem;
 static    LPD_SLOTS    lpd_slots[LPD_NSLOTS];
-static    u_char        *lpd_pname = "lpdx";
-static    u_char        data_buf[LPD_NSLOTS][SZ_DBUF];
+static    u_char       *lpd_pname = "lpdx";
+static    u_char       data_buf[LPD_NSLOTS][SZ_DBUF];
 
 
 /*
@@ -93,24 +93,24 @@ static    u_char        data_buf[LPD_NSLOTS][SZ_DBUF];
 PROCESS
 lp_dd()
 {
-    u_long            slot;        /* index into lpd_slots for this connect */
-    u_long            tlen;        /* temporary length counter */
+    u_long            slot;          /* index into lpd_slots for this connect */
+    u_long            tlen;          /* temporary length counter */
     u_long            lfsize;        /* accumulated file length */
-    u_char            *t0_ptr;    /* temporary pointer */
-    u_char            *t1_ptr;    /* temporary pointer */
-    int                fd;            /* device descriptor for read/writes */
-    u_long            skey;        /* key value returned by spool_connect */
-    u_long            sdd;        /* spooler device descriptor */
-    int                cflag;        /* indicates if check_slots has run */
+    u_char            *t0_ptr;       /* temporary pointer */
+    u_char            *t1_ptr;       /* temporary pointer */
+    int               fd;            /* device descriptor for read/writes */
+    u_long            skey;          /* key value returned by spool_connect */
+    u_long            sdd;           /* spooler device descriptor */
+    int               cflag;         /* indicates if check_slots has run */
     u_char            sbuf[SBSZ];    /* storage buffer */
-    struct devsw    *devptr;    /* pointer to device switch table */
-    struct tcb        *ptcb;        /* pointer to tcp control block */
+    struct devsw      *devptr;       /* pointer to device switch table */
+    struct tcb        *ptcb;         /* pointer to tcp control block */
 
-    register    u_char        *dptr;        /* pointer through data_buf */
+    register    u_char       *dptr;        /* pointer through data_buf */
     register    LPD_SLOTS    *lptr;        /* pointer to appropriate lpd_slots */
-    register    u_long        len;        /* remaining len of bytes in data_buf */
-    register    u_long        x;            /* just a temp */
-    register    u_long        y;            /* just a temp */
+    register    u_long        len;         /* remaining len of bytes in data_buf */
+    register    u_long        x;           /* just a temp */
+    register    u_long        y;           /* just a temp */
 
     /*
      *    Only the very 1st time through do we need to skip the
@@ -651,11 +651,11 @@ int        slot;
  */
 static int
 send_ack(fd,ack)
-int            fd;                /* file descriptor to use in write */
+int            fd;             /* file descriptor to use in write */
 int            ack;            /* acknowledgment byte to send */
 {
     u_char        resp_buf[2];
-    int            slen;
+    int           slen;
 
     resp_buf[0] = ack;
     resp_buf[1] = 0;
@@ -690,7 +690,7 @@ send_pclose(fd)
 int        fd;
 {
     struct devsw    *devptr;
-    struct tcb        *ptcb;
+    struct tcb      *ptcb;
 
     devptr          = &devtab[fd];
     ptcb            = (struct tcb *)devptr->dvioblk;
