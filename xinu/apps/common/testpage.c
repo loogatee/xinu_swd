@@ -7,7 +7,7 @@ static char rcsid[] = "$Id: testpage.c,v 1.2 1993/01/30 03:01:19 johnr Exp $";
 #include <systypes.h>
 #include <spooler.h>
 
-int		tpg_sem;
+int        tpg_sem;
 
 
 char testpg_buf[] =
@@ -775,43 +775,43 @@ char testpg_buf[] =
 PROCESS
 testpage_d()
 {
-	u_long			skey;		/* key value returned by spool_connect */
-	u_long			sdd;		/* spooler device descriptor */
-	char			*src_ptr;
-	int				cnt;
-	int				size;
+    u_long           skey;        /* key value returned by spool_connect */
+    u_long           sdd;         /* spooler device descriptor */
+    char            *src_ptr;
+    int              cnt;
+    int              size;
 
-	tpg_sem = screate(0);
-
-
-	while (1)
-	{
-		wait(tpg_sem);
-
-		while (!(sdd=spool_connect(&skey,SPL_TESTPG)))
-			sleep10(5);
-
-		spool_filename(sdd,skey,"Testpage");
+    tpg_sem = screate(0);
 
 
-		src_ptr = testpg_buf;
-		cnt     = sizeof(testpg_buf);
+    while (1)
+    {
+        wait(tpg_sem);
 
-		while (cnt != 0)
-		{
-			if (cnt > 1024)
-				size = 1024;
-			else
-				size = cnt;
+        while (!(sdd=spool_connect(&skey,SPL_TESTPG)))
+            sleep10(5);
 
-			spool_write(sdd,skey,src_ptr,size);
+        spool_filename(sdd,skey,"Testpage");
 
-			src_ptr = src_ptr + size;
-			cnt     = cnt - size;
-		}
 
-		spool_disconnect(sdd,skey);
-	}
+        src_ptr = testpg_buf;
+        cnt     = sizeof(testpg_buf);
+
+        while (cnt != 0)
+        {
+            if (cnt > 1024)
+                size = 1024;
+            else
+                size = cnt;
+
+            spool_write(sdd,skey,src_ptr,size);
+
+            src_ptr = src_ptr + size;
+            cnt     = cnt - size;
+        }
+
+        spool_disconnect(sdd,skey);
+    }
 }
 
 

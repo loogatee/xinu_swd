@@ -6,102 +6,102 @@ static char rcsid[] = "$Id: rlogind.c,v 1.2 1992/12/02 22:22:27 johnr Exp $";
 #include <kernel.h>
 #include <network.h>
 
-static	int		nsh_active;
-static	int		nsh_pid;
+static    int        nsh_active;
+static    int        nsh_pid;
 
 PROCESS
 net_shell()
 {
-	int				fd;
-	struct devsw	*devptr;
-	struct tcb		*ptcb;
+    int              fd;
+    struct devsw    *devptr;
+    struct tcb      *ptcb;
 
-	while (1)
-	{
-		fd = receive();
+    while (1)
+    {
+        fd = receive();
 
-		/*
-		 * Fire up the shell.
-		 */
-		if (login(fd,1) == OK)
-			shell(fd,1);
+        /*
+         * Fire up the shell.
+         */
+        if (login(fd,1) == OK)
+            shell(fd,1);
 
-		/*
-		 *	Close the TCP slave device
-		 */
-		devptr          = &devtab[fd];
-		ptcb            = (struct tcb *)devptr->dvioblk;
-		ptcb->tcb_state = TCPS_CLOSEWAIT;
-		close(fd);
+        /*
+         *    Close the TCP slave device
+         */
+        devptr          = &devtab[fd];
+        ptcb            = (struct tcb *)devptr->dvioblk;
+        ptcb->tcb_state = TCPS_CLOSEWAIT;
+        close(fd);
 
-		nsh_active = 0;
-	}
+        nsh_active = 0;
+    }
 }
 
 
 PROCESS
 rlogin_d()
 {
-	int				fd;
-	int				fd1;
-	char			buf[80];
-	char			rbuf[2];
-	struct devsw	*devptr;
-	struct tcb		*ptcb;
+    int             fd;
+    int             fd1;
+    char            buf[80];
+    char            rbuf[2];
+    struct devsw    *devptr;
+    struct tcb      *ptcb;
 
-	rbuf[1]    = 0;
-	nsh_active = 0;
+    rbuf[1]    = 0;
+    nsh_active = 0;
 
-	nsh_pid = create(net_shell,INITSTK,INITPRIO,"net_shell",INITARGS);
-	resume(nsh_pid);
+    nsh_pid = create(net_shell,INITSTK,INITPRIO,"net_shell",INITARGS);
+    resume(nsh_pid);
 
-	/*
-	 *	Open up the TCP master device and set the listen queue length
-	 */
-	fd = open(TCP, ANYFPORT, 513);
-	control(fd, TCPC_LISTENQ, 2);
+    /*
+     *    Open up the TCP master device and set the listen queue length
+     */
+    fd = open(TCP, ANYFPORT, 513);
+    control(fd, TCPC_LISTENQ, 2);
 
-	while (1)
-	{
-		/*
-		 *	Wait for a client to initiate a connection
-		 */
-		fd1 = control(fd, TCPC_ACCEPT);
+    while (1)
+    {
+        /*
+         *    Wait for a client to initiate a connection
+         */
+        fd1 = control(fd, TCPC_ACCEPT);
 
-		/*
-		 *	Read the "pre-connection" data, then respond with a 0
-		 */
-		read(fd1, buf, 80);
-		read(fd1, buf, 80);
+        /*
+         *    Read the "pre-connection" data, then respond with a 0
+         */
+        read(fd1, buf, 80);
+        read(fd1, buf, 80);
 
-		if (nsh_active == 0)
-			rbuf[0] = 0;
-		else
-			rbuf[0] = 1;
+        if (nsh_active == 0)
+            rbuf[0] = 0;
+        else
+            rbuf[0] = 1;
 
-		write(fd1, rbuf, 1);
+        write(fd1, rbuf, 1);
 
-		if (nsh_active == 0)
-		{
-			nsh_active = 1;
-			send(nsh_pid,fd1);
-		}
-		else
-		{
-			/*
-			 *	Close the TCP slave device
-			 */
-			devptr          = &devtab[fd1];
-			ptcb            = (struct tcb *)devptr->dvioblk;
-			ptcb->tcb_state = TCPS_CLOSEWAIT;
-			close(fd1);
-		}
-	}
+        if (nsh_active == 0)
+        {
+            nsh_active = 1;
+            send(nsh_pid,fd1);
+        }
+        else
+        {
+            /*
+             *    Close the TCP slave device
+             */
+            devptr          = &devtab[fd1];
+            ptcb            = (struct tcb *)devptr->dvioblk;
+            ptcb->tcb_state = TCPS_CLOSEWAIT;
+            close(fd1);
+        }
+    }
 }
 
 
 /*
- *	$Log: rlogind.c,v $
+ *    $Log: rlogind.c,v $
  * Revision 1.2  1992/12/02  22:22:27  johnr
  * JR:  Changed the strategy for the rlogin_d process.  rlogin_d now serves
  *      only to accept/reject the TCP connections.  Currently only 1 is
