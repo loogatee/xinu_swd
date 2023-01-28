@@ -1,0 +1,36 @@
+/* $Id: link.me,v 1.3 1993/04/15 23:18:26 johnr Exp $ */
+OUTPUT_FORMAT("a.out-sunos-big")
+OUTPUT_ARCH(m68k)
+
+MEMORY {
+	rom : org = 0x8000,  l = 60k
+/*	rom : org = 0x3a1000,  l = 60k */
+/*	rom : org = 0x3c0000,  l = 60k */
+	ram : org = 0x3b0000,  l = 4M
+}
+
+SECTIONS {
+	.text : {
+				CREATE_OBJECT_SYMBOLS
+				_rom = .;
+				*(.text)
+				. = ALIGN(0x10);
+				_etext = .;
+			} > rom
+
+	.data : {
+				_ram = .;
+				*(.data)
+				. = ALIGN(0x10);
+				_edata = .;
+			} > ram
+
+	.bss :  {
+				*(.bss)
+				*(COMMON)
+				_end = .;
+				__end = .;
+
+			} > ram
+	size_ddata = SIZEOF(.data);
+}

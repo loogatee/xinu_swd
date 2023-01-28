@@ -1,0 +1,38 @@
+Script started on Tue Jun 15 08:27:57 1993
+hagar% make
+gld -o x.out -M  -T link.me -L../../xinu/ipnet/objs_snmp -L../../libc/objs_68020  -e _start ../../xinu/sys/objs_sun350/startup.o  main.o -lsnmp > x.out.lmap
+
+
+
+
+
+_resume			main.o
+_create			main.o
+_write			snmpd.o
+_read			snmpd.o
+_open			snmpd.o
+_getmem			snmpd.o snb2a.o snparse.o snhash.o sat_get.o sif_get.o snleaf.o
+_clktime		mksnmp.o
+_freemem		snfreebl.o a1rwval.o
+_nif			sninit.o sae_get.o sae_getf.o sae_getn.o sae_match.o sat_match.o
+				sat_set.o sif_get.o sif_set.o sae_findn.o sat_findn.o
+_Net			sninit.o sntable.o
+_vers			sninit.o
+_rttable		srt_match.o srt_findn.o
+_rtdel			srt_set.o
+_tcbtab			stc_get.o stc_getf.o stc_getn.o stc_match.o stc_findn.o
+_arptable		sat_get.o sat_getf.o sat_getn.o sat_match.o sat_set.o
+				sat_findn.o
+_lenq			sif_get.o
+
+
+
+_printf			snmpd.o
+_blkcopy		mksnmp.o snb2a.o snparse.o a1rwoid.o a1rwval.o srt_get.o
+				srt_getf.o srt_set.o stc_get.o stc_getf.o a1rwint.o
+				sae_get.o sae_getf.o sat_get.o sat_getf.o sat_set.o sif_get.o
+				sif_getf.o snleaf.o
+_strncmp		snparse.o
+_blkequ			snrslv.o a1rwoid.o snhash.o stc_match.o
+_strlen			sif_get.o snleaf.o
+_blkcmp			srt_findn.o stc_findn.o sae_findn.o sat_findn.o
